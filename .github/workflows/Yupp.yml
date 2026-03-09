@@ -1,0 +1,51 @@
+name: yupp RKDYIPTV Playlist Update
+
+on:
+  schedule:
+    - cron: "1 0,6,12,18 * * *"
+  workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.x"
+
+      - name: Generate Playlist
+        run: |
+          import requests
+
+          url = "https://pvt-airtel.rkdyiptv.workers.dev/rkdyiptv.m3u8"
+          logo = "https://i.ibb.co/VWVcf4t5/RKDYIPTV.jpg"
+
+          r = requests.get(url)
+          lines = r.text.split("\n")
+
+          output = []
+          output.append("#EXTM3U")
+          output.append("# Credit: RKDYIPTV")
+
+          for line in lines:
+
+              if line.startswith("#EXTINF") and "tvg-logo" not in line:
+                  line = line.replace("#EXTINF:-1", f'#EXTINF:-1 tvg-logo="{logo}"')
+
+              output.append(line)
+
+          open("Script/Playlist/yupptv.m3u","w").write("\n".join(output))
+        shell: python
+
+      - name: Commit Changes
+        run: |
+          git config --global user.name "RKDYIPTV"
+          git config --global user.email "rkdyiptv@users.noreply.github.com"
+          git add Script/Playlist/yupptv.m3u
+          git commit -m "Auto Update $(date)" || echo "No changes"
+          git push
