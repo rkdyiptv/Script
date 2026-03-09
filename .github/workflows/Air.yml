@@ -27,7 +27,7 @@ jobs:
       - name: Create Folder
         run: mkdir -p Playlist/airtel.m3u
 
-      - name: Generate index.html Playlist
+      - name: Generate Playlist
         run: |
           import requests
 
@@ -46,28 +46,21 @@ jobs:
                   line=line.replace("#EXTINF:-1",f'#EXTINF:-1 tvg-logo="{logo}"')
               playlist.append(line)
 
-          html=f'''<!DOCTYPE html>
-<html>
-<head>
-
-<meta charset="UTF-8">
-<title>RKDYIPTV</title>
-
-<script>
-window.location.href = "https://telegram.me/rkdyiptv";
-</script>
-
-</head>
-
-<body>
-
-<pre>
-{"\n".join(playlist)}
-</pre>
-
-</body>
-</html>
-'''
+          html = "<!DOCTYPE html>\n"
+          html += "<html>\n"
+          html += "<head>\n"
+          html += '<meta charset="UTF-8">\n'
+          html += "<title>RKDYIPTV</title>\n"
+          html += "<script>\n"
+          html += 'window.location.href = "https://telegram.me/rkdyiptv";\n'
+          html += "</script>\n"
+          html += "</head>\n"
+          html += "<body>\n"
+          html += "<pre>\n"
+          html += "\n".join(playlist)
+          html += "\n</pre>\n"
+          html += "</body>\n"
+          html += "</html>"
 
           open("Playlist/airtel.m3u/index.html","w").write(html)
         shell: python
@@ -76,6 +69,6 @@ window.location.href = "https://telegram.me/rkdyiptv";
         run: |
           git config --global user.name "RKDYIPTV"
           git config --global user.email "rkdyiptv@users.noreply.github.com"
-          git add Script/Playlist
+          git add Playlist
           git commit -m "Auto Update $(date)" || echo "No changes"
           git push
