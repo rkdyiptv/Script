@@ -1,0 +1,16 @@
+[package]
+entrypoint = "start"
+
+[dependencies]
+"php/php" = "=8.2.0"
+
+[fs]
+"/app" = "."
+
+[[command]]
+name = "start"
+module = "php/php:php"
+runner = "wasi"
+
+[command.annotations.wasi]
+main-args = ["-S", "0.0.0.0:8080", "-t", "/app"]
