@@ -5,7 +5,7 @@ permissions:
 
 on:
   schedule:
-    - cron: "1 0,6,12,18 * * *"
+    - cron: "31 18,0,6,12 * * *"
   workflow_dispatch:
 
 jobs:
@@ -31,19 +31,19 @@ jobs:
         run: |
           import requests
 
-          source="https://pvt-airtel.rkdyiptv.workers.dev/rkdyiptv.m3u8"
-          logo="https://i.ibb.co/VWVcf4t5/RKDYIPTV.jpg"
+          source = "https://pvt-airtel.rkdyiptv.workers.dev/rkdyiptv.m3u8"
+          logo = "https://i.ibb.co/VWVcf4t5/RKDYIPTV.jpg"
 
-          r=requests.get(source)
-          lines=r.text.split("\n")
+          r = requests.get(source)
+          lines = r.text.split("\n")
 
-          playlist=[]
+          playlist = []
           playlist.append("#EXTM3U")
           playlist.append("# Credit: RKDYIPTV")
 
           for line in lines:
               if line.startswith("#EXTINF") and "tvg-logo" not in line:
-                  line=line.replace("#EXTINF:-1",f'#EXTINF:-1 tvg-logo="{logo}"')
+                  line = line.replace("#EXTINF:-1", f'#EXTINF:-1 tvg-logo="{logo}"')
               playlist.append(line)
 
           html = "<!DOCTYPE html>\n"
