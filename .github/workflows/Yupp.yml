@@ -1,5 +1,8 @@
 name: yupptv RKDYIPTV Playlist Update
 
+permissions:
+  contents: write
+
 on:
   schedule:
     - cron: "1 0,6,12,18 * * *"
@@ -39,10 +42,8 @@ jobs:
           playlist.append("# Credit: RKDYIPTV")
 
           for line in lines:
-
               if line.startswith("#EXTINF") and "tvg-logo" not in line:
                   line = line.replace("#EXTINF:-1", f'#EXTINF:-1 tvg-logo="{logo}"')
-
               playlist.append(line)
 
           open("Script/Playlist/yupptv.m3u/playlist.m3u","w").write("\n".join(playlist))
@@ -58,22 +59,17 @@ jobs:
           <title>RKDYIPTV</title>
 
           <script>
-
           var ua = navigator.userAgent.toLowerCase();
-
           if(ua.includes("mozilla") || ua.includes("chrome") || ua.includes("safari")){
           window.location.href="https://t.me/rkdyiptv";
           }
-
           </script>
 
           </head>
 
           <body>
-          <pre>
-          #EXTM3U
-          # Credit: RKDYIPTV
-          </pre>
+          <pre>#EXTM3U
+          # Credit: RKDYIPTV</pre>
           </body>
           </html>
           EOF
