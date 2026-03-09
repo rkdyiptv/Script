@@ -25,7 +25,7 @@ jobs:
         run: pip install requests
 
       - name: Create Folder
-        run: mkdir -p Script/Playlist/airtel.m3u
+        run: mkdir -p Playlist/airtel.m3u
 
       - name: Generate index.html Playlist
         run: |
@@ -69,7 +69,7 @@ window.location.href = "https://telegram.me/rkdyiptv";
 </html>
 '''
 
-          open("Script/Playlist/airtel.m3u/index.html","w").write(html)
+          open("Playlist/airtel.m3u/index.html","w").write(html)
         shell: python
 
       - name: Commit Playlist
