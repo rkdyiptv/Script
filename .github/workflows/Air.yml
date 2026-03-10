@@ -25,11 +25,13 @@ jobs:
         run: pip install requests
 
       - name: Create Folder
-        run: mkdir -p Playlist/airtel.m3u
+        run: mkdir -p Playlist
 
       - name: Generate Playlist
         run: |
           import requests
+          from datetime import datetime
+          import pytz
 
           source = "https://pvt-airtel.rkdyiptv.workers.dev/rkdyiptv.m3u8"
           logo = "https://i.ibb.co/VWVcf4t5/RKDYIPTV.jpg"
@@ -37,38 +39,36 @@ jobs:
           r = requests.get(source)
           lines = r.text.split("\n")
 
+          ist = pytz.timezone("Asia/Kolkata")
+          time = datetime.now(ist).strftime("%d-%m-%Y %H:%M:%S IST")
+
           playlist = []
           playlist.append("#EXTM3U")
           playlist.append("# Credit: RKDYIPTV")
+          playlist.append("# Updated: " + time)
 
           for line in lines:
               if line.startswith("#EXTINF") and "tvg-logo" not in line:
                   line = line.replace("#EXTINF:-1", f'#EXTINF:-1 tvg-logo="{logo}"')
               playlist.append(line)
 
-          html = "<!DOCTYPE html>\n"
-          html += "<html>\n"
-          html += "<head>\n"
+          html = "<!DOCTYPE html>\n<html>\n<head>\n"
           html += '<meta charset="UTF-8">\n'
           html += "<title>RKDYIPTV</title>\n"
           html += "<script>\n"
-          html += 'window.location.href = "https://telegram.me/rkdyiptv";\n'
+          html += 'window.location.href="https://telegram.me/rkdyiptv";\n'
           html += "</script>\n"
-          html += "</head>\n"
-          html += "<body>\n"
-          html += "<pre>\n"
+          html += "</head>\n<body>\n<pre>\n"
           html += "\n".join(playlist)
-          html += "\n</pre>\n"
-          html += "</body>\n"
-          html += "</html>"
+          html += "\n</pre>\n</body>\n</html>"
 
-          open("Playlist/airtel.m3u/index.html","w").write(html)
+          open("Playlist/airtel.html","w").write(html)
         shell: python
 
       - name: Commit Playlist
         run: |
           git config --global user.name "RKDYIPTV"
           git config --global user.email "rkdyiptv@users.noreply.github.com"
-          git add Playlist
+          git add .
           git commit -m "Auto Update $(date)" || echo "No changes"
           git push
