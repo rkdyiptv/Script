@@ -21,8 +21,8 @@ jobs:
         with:
           python-version: "3.x"
 
-      - name: Install Requests
-        run: pip install requests
+      - name: Install Dependencies
+        run: pip install requests pytz
 
       - name: Create Folder
         run: mkdir -p Playlist
@@ -52,15 +52,21 @@ jobs:
                   line = line.replace("#EXTINF:-1", f'#EXTINF:-1 tvg-logo="{logo}"')
               playlist.append(line)
 
-          html = "<!DOCTYPE html>\n<html>\n<head>\n"
+          html = "<!DOCTYPE html>\n"
+          html += "<html>\n"
+          html += "<head>\n"
           html += '<meta charset="UTF-8">\n'
           html += "<title>RKDYIPTV</title>\n"
           html += "<script>\n"
           html += 'window.location.href="https://telegram.me/rkdyiptv";\n'
           html += "</script>\n"
-          html += "</head>\n<body>\n<pre>\n"
+          html += "</head>\n"
+          html += "<body>\n"
+          html += "<pre>\n"
           html += "\n".join(playlist)
-          html += "\n</pre>\n</body>\n</html>"
+          html += "\n</pre>\n"
+          html += "</body>\n"
+          html += "</html>"
 
           open("Playlist/airtel.html","w").write(html)
         shell: python
