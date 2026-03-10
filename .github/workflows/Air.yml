@@ -68,7 +68,7 @@ jobs:
           html += "</body>\n"
           html += "</html>"
 
-          open("Playlist/index.html","w").write(html)
+          open("Playlist/airtel.m3u/index.html","w").write(html)
         shell: python
 
       - name: Commit Playlist
