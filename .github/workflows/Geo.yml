@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write   # 🔥 FIX
+  contents: write
 
 jobs:
   build:
@@ -18,8 +18,7 @@ jobs:
 
       - name: Generate Playlist
         run: |
-          mkdir -p Playlist/Ptvgeo.m3u   # ✅ folder auto create
-
+          mkdir -p Playlist/Ptvgeo.m3u
           FILE="Playlist/Ptvgeo.m3u/index.html"
 
           echo '<!DOCTYPE html>' > $FILE
@@ -33,7 +32,26 @@ jobs:
           echo '<pre>' >> $FILE
           echo '#EXTM3U' >> $FILE
 
-          curl -s "${{ secrets.GEO_PVT }}" >> $FILE
+          echo "Fetching playlist..."
+
+          DATA=$(curl -L -s \
+            -H "User-Agent: Mozilla/5.0" \
+            -H "Accept: */*" \
+            -H "Connection: keep-alive" \
+            "${{ secrets.GEO_PVT }}")
+
+          # अगर data empty hai to proxy try karo
+          if [ -z "$DATA" ]; then
+            echo "Direct fetch failed, trying proxy..."
+            DATA=$(curl -s "https://api.allorigins.win/raw?url=${{ secrets.GEO_PVT }}")
+          fi
+
+          # अगर phir bhi empty hai
+          if [ -z "$DATA" ]; then
+            echo "# ERROR: Playlist fetch failed" >> $FILE
+          else
+            echo "$DATA" >> $FILE
+          fi
 
           echo '</pre>' >> $FILE
 
