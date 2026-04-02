@@ -5,6 +5,9 @@ on:
     - cron: "*/15 * * * *"
   workflow_dispatch:
 
+permissions:
+  contents: write   # 🔥 FIX
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -15,7 +18,8 @@ jobs:
 
       - name: Generate Playlist
         run: |
-          mkdir -p Playlist/Ptvgeo.m3u
+          mkdir -p Playlist/Ptvgeo.m3u   # ✅ folder auto create
+
           FILE="Playlist/Ptvgeo.m3u/index.html"
 
           echo '<!DOCTYPE html>' > $FILE
@@ -39,5 +43,7 @@ jobs:
           git config --global user.email "actions@github.com"
 
           git add .
-          git commit -m "Geo PVT Playlist Update" || echo "No changes"
+
+          git diff --cached --quiet || git commit -m "Geo PVT Playlist Update"
+
           git push
