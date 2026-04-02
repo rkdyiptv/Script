@@ -1,0 +1,43 @@
+name: Geo PVT
+
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+
+      - name: Generate Playlist
+        run: |
+          mkdir -p Playlist/Ptvgeo.m3u
+          FILE="Playlist/Ptvgeo.m3u/index.html"
+
+          echo '<!DOCTYPE html>' > $FILE
+          echo '<script>' >> $FILE
+          echo 'window.location.href = "https://telegram.me/rkdyiptv";' >> $FILE
+          echo '</script>' >> $FILE
+
+          echo '<h2>RKDYIPTV FULL CREDIT</h2>' >> $FILE
+          echo '<p>Join Telegram: https://telegram.me/rkdyiptv</p>' >> $FILE
+
+          echo '<pre>' >> $FILE
+          echo '#EXTM3U' >> $FILE
+
+          curl -s "${{ secrets.GEO_PVT }}" >> $FILE
+
+          echo '</pre>' >> $FILE
+
+      - name: Commit & Push
+        run: |
+          git config --global user.name "rkdy-bot"
+          git config --global user.email "actions@github.com"
+
+          git add .
+          git commit -m "Geo PVT Playlist Update" || echo "No changes"
+          git push
